@@ -30,9 +30,27 @@ const cloudant = CloudantV1.newInstance({
 });
 const DB_NAME = 'mindmap-moodlogs';
 
+// Ensure database exists
+async function ensureDbExists() {
+  try {
+    console.log(`Checking for database: ${DB_NAME}`);
+    await cloudant.getDatabaseInformation({ db: DB_NAME });
+    console.log(`Database ${DB_NAME} exists.`);
+  } catch (err) {
+    if (err.status === 404) {
+      console.log(`Database ${DB_NAME} not found. Creating...`);
+      await cloudant.putDatabase({ db: DB_NAME });
+      console.log(`Database ${DB_NAME} created.`);
+    } else {
+      console.error(`Error checking for database: ${err.message}`);
+    }
+  }
+}
+ensureDbExists();
+
 // Initialize Gemini (Using the requested Flash model)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
 // Auth Middleware (Manual JWT Verification for IBM App ID)
 const client = jwksClient({
@@ -74,67 +92,112 @@ const authMiddleware = (req, res, next) => {
 // Mood Mapping Logic
 function mapNluToMood(emotions, sentiment) {
   const { anger, disgust, fear, joy, sadness } = emotions;
-  if (sadness > 0.6 || disgust > 0.5) return 'low_mood';
-  if (fear > 0.5 || anger > 0.4) return 'anxious';
-  if (sentiment.score < -0.4 && joy < 0.3) return 'burned_out';
-  if (joy > 0.6 && sentiment.score > 0.3) return 'focused';
+  const score = sentiment.score || 0;
+  
+  // High Priority: Stress/Anxiety
+  if (fear > 0.3 || anger > 0.3 || (score < -0.2 && (fear > 0.2 || anger > 0.2))) return 'anxious';
+  
+  // High Priority: Low Mood / Sadness
+  if (sadness > 0.4 || (score < -0.5 && joy < 0.3)) return 'low_mood';
+  
+  // Burned Out: Negative sentiment, low joy, and presence of sadness/fear
+  if (score < -0.4 && joy < 0.2 && (sadness > 0.2 || fear > 0.2)) return 'burned_out';
+  
+  // Positive States
+  if (joy > 0.5 && score > 0.3) return 'focused';
+  if (joy > 0.3 && score > 0) return 'calm';
+  
+  // Fallback for negative sentiment
+  if (score < -0.1) return 'low_mood';
+  
   return 'calm';
 }
 
 // Routes
 app.post('/api/analyseAndPlan', authMiddleware, async (req, res) => {
   const { journalText, subjects, availableHours } = req.body;
+  console.log(`Processing plan for user: ${req.userId}`);
+  console.log(`Journal: ${journalText}`);
 
   try {
     let emotions = { anger: 0, disgust: 0, fear: 0, joy: 0.5, sadness: 0 };
     let sentiment = { score: 0, label: 'neutral' };
     
     try {
+      console.log('Analyzing with Watson NLU...');
       const result = await nlu.analyze({
         text: journalText || "Feeling okay.",
         features: { emotion: {}, sentiment: {} }
       });
       emotions = result.result.emotion.document.emotion;
       sentiment = result.result.sentiment.document;
+      console.log('NLU Results:', { emotions, sentiment });
     } catch (e) {
       console.warn('Watson NLU Warning:', e.message);
     }
 
     const mood = mapNluToMood(emotions, sentiment);
-    const energy = Math.round((emotions.joy * 0.6 + (1 - emotions.sadness) * 0.4) * 10);
-    const focus = Math.round(((1 - emotions.fear) * 0.5 + (1 - emotions.anger) * 0.5) * 10);
-    const stress = Math.round((emotions.fear * 0.5 + emotions.anger * 0.3 + emotions.sadness * 0.2) * 10);
+    
+    // Improved logic for metrics
+    const energy = Math.round((emotions.joy * 0.7 + (1 - emotions.sadness) * 0.3) * 10);
+    const focus = Math.round(((1 - emotions.fear) * 0.3 + (1 - emotions.anger) * 0.2 + emotions.joy * 0.3 + (1 - emotions.sadness) * 0.2) * 10);
+    const stress = Math.round((emotions.fear * 0.6 + emotions.anger * 0.3 + emotions.sadness * 0.1) * 10);
+
+    let studyDuration = 25;
+    let breakDuration = 5;
+    
+    if (mood === 'calm' || mood === 'focused') {
+      studyDuration = 90;
+      breakDuration = 30;
+    } else if (mood === 'low_mood' || mood === 'burned_out') {
+      studyDuration = 20;
+      breakDuration = 10;
+    } else if (mood === 'anxious') {
+      studyDuration = 25;
+      breakDuration = 5;
+    }
 
     const prompt = `You are a personalised study scheduler.
     Student state: mood=${mood}, energy=${energy}/10, focus=${focus}/10, stress=${stress}/10
     Subjects: ${JSON.stringify(subjects)}
     Available time: ${availableHours} hours
+    IMPORTANT: Structure the plan using these specific durations for this mood:
+    - Each study block MUST be exactly ${studyDuration} minutes.
+    - Each break MUST be exactly ${breakDuration} minutes.
+    - If the student is stressed (stress > 7), make the break "breathing" type.
     Return ONLY JSON: {
-      totalStudyMinutes: number,
-      restRecommendedMinutes: number,
-      musicVibe: 'lofi_chill'|'lofi_focus'|'ambient'|'silence',
-      blocks: [{ subject, durationMinutes, tip, breakAfter: { durationMinutes, type, instruction } }],
-      sessionMessage: string,
-      empathyNote: string
+      "totalStudyMinutes": number,
+      "restRecommendedMinutes": number,
+      "musicVibe": "lofi_chill"|"lofi_focus"|"ambient"|"silence",
+      "blocks": [{ "subject": string, "durationMinutes": ${studyDuration}, "tip": string, "breakAfter": { "durationMinutes": ${breakDuration}, "type": "breathing"|"normal", "instruction": string } }],
+      "sessionMessage": string,
+      "empathyNote": string
     }`;
 
+    console.log('Generating content with Gemini...');
     let sessionPlan;
     try {
       const geminiResult = await model.generateContent(prompt);
       const text = geminiResult.response.text();
-      const cleanJson = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+      console.log('Gemini Raw Text:', text);
+      let cleanJson = text;
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        cleanJson = jsonMatch[0];
+      }
       sessionPlan = JSON.parse(cleanJson);
+      console.log('Parsed Session Plan:', sessionPlan);
     } catch (err) {
-      console.error('Gemini Error:', err.message);
+      console.error('Gemini Error Detailed:', err);
       sessionPlan = {
-        totalStudyMinutes: 60,
-        restRecommendedMinutes: 10,
-        musicVibe: 'lofi_focus',
+        totalStudyMinutes: subjects.length * studyDuration,
+        restRecommendedMinutes: subjects.length * breakDuration,
+        musicVibe: mood === 'calm' ? 'lofi_chill' : 'lofi_focus',
         blocks: subjects.map(s => ({
           subject: s.name,
-          durationMinutes: 25,
+          durationMinutes: studyDuration,
           tip: 'Stay focused and take deep breaths.',
-          breakAfter: { durationMinutes: 5, type: 'breathing', instruction: 'Follow the 4-7-8 breathing circle.' }
+          breakAfter: { durationMinutes: breakDuration, type: 'breathing', instruction: 'Follow the 4-7-8 breathing circle.' }
         })),
         sessionMessage: 'AI is resting, but here is your plan.',
         empathyNote: 'Take it one step at a time.'
@@ -143,8 +206,8 @@ app.post('/api/analyseAndPlan', authMiddleware, async (req, res) => {
 
     res.json({ mood, energy, focus, stress, emotions, sessionPlan });
   } catch (err) {
-    console.error('Final Error:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Final Error Detailed:', err);
+    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
   }
 });
 
@@ -164,28 +227,34 @@ app.post('/api/getReflection', authMiddleware, async (req, res) => {
 
 app.post('/api/saveSession', authMiddleware, async (req, res) => {
   try {
+    console.log(`Saving session for user: ${req.userId}`);
     const doc = {
       _id: `${req.userId}_${Date.now()}`,
       userId: req.userId,
       createdAt: new Date().toISOString(),
       ...req.body
     };
-    await cloudant.postDocument({ db: DB_NAME, document: doc });
+    const response = await cloudant.postDocument({ db: DB_NAME, document: doc });
+    console.log('Cloudant save response:', response.result);
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Cloudant error' });
+    console.error('Cloudant error:', err.message);
+    res.status(500).json({ error: 'Cloudant error: ' + err.message });
   }
 });
 
 app.get('/api/history', authMiddleware, async (req, res) => {
   try {
+    console.log(`Fetching history for user: ${req.userId}`);
     const response = await cloudant.postFind({
       db: DB_NAME,
       selector: { userId: req.userId },
       limit: 7
     });
+    console.log(`Found ${response.result.docs.length} docs`);
     res.json(response.result.docs);
   } catch (err) {
+    console.error('History fetch error:', err.message);
     res.json([]);
   }
 });
@@ -198,4 +267,8 @@ app.post('/api/getWeeklyInsight', authMiddleware, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+module.exports = app;

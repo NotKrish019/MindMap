@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Lexend:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline": "#7b7486",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#ffd8e7",
+                        "on-secondary-fixed-variant": "#85145a",
+                        "on-primary-fixed-variant": "#5516be",
+                        "inverse-surface": "#322f39",
+                        "surface-bright": "#fef7ff",
+                        "background": "#fef7ff",
+                        "on-tertiary-fixed": "#261a00",
+                        "primary-fixed-dim": "#d0bcff",
+                        "tertiary-container": "#956e00",
+                        "on-primary-fixed": "#23005c",
+                        "surface-tint": "#6d3bd7",
+                        "primary-container": "#8455ef",
+                        "surface-container-high": "#ede5f3",
+                        "tertiary": "#765700",
+                        "primary-fixed": "#e9ddff",
+                        "secondary": "#a43073",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f5eefb",
+                        "on-background": "#1d1a23",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "inverse-primary": "#d0bcff",
+                        "tertiary-fixed": "#ffdf9f",
+                        "on-secondary-fixed": "#3d0026",
+                        "on-secondary-container": "#76014e",
+                        "secondary-fixed-dim": "#ffafd3",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#ded7e4",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "on-surface": "#1d1a23",
+                        "surface-container": "#f3ebf8",
+                        "surface-variant": "#e7e0ed",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-low": "#f8f1fe",
+                        "outline-variant": "#cbc3d7",
+                        "surface-container-highest": "#e7e0ed",
+                        "primary": "#6b38d4",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "surface": "#fef7ff",
+                        "on-tertiary-container": "#fffbff",
+                        "secondary-container": "#fc79bd",
+                        "on-surface-variant": "#494454"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "12px",
+                        "gutter": "20px",
+                        "md": "24px",
+                        "base": "8px",
+                        "xs": "4px",
+                        "margin": "24px",
+                        "xl": "64px",
+                        "lg": "40px"
+                    },
+                    "fontFamily": {
+                        "h3": ["Epilogue"],
+                        "label-caps": ["Lexend"],
+                        "h2": ["Epilogue"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"],
+                        "label-bold": ["Lexend"],
+                        "h1": ["Epilogue"]
+                    },
+                    "fontSize": {
+                        "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "fontWeight": "700"}],
+                        "h2": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-bold": ["14px", {"lineHeight": "1.0", "fontWeight": "600"}],
+                        "h1": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .polka-dot-bg {
+            background-image: radial-gradient(#cbc3d7 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md polka-dot-bg min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#FDFBF7] dark:bg-zinc-950 border-b-[2.5px] border-zinc-900 shadow-[4px_4px_0px_0px_#1A1A1A]">
+<div class="flex items-center gap-4">
+<h1 class="font-['Epilogue'] font-black tracking-tight text-2xl text-zinc-900 dark:text-zinc-50">MindMap</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8 font-['Epilogue'] font-bold">
+<a class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 transition-all" href="#">Home</a>
+<a class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 transition-all" href="#">Journal</a>
+<a class="text-[#8B5CF6] border-b-4 border-[#8B5CF6] pb-1" href="#">Session</a>
+<a class="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 transition-all" href="#">Dashboard</a>
+</nav>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all rounded-full">
+<span class="material-symbols-outlined text-zinc-900 dark:text-zinc-50">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Decoration Layer -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<svg class="absolute top-24 left-10 text-secondary-container" height="60" viewbox="0 0 60 60" width="60">
+<circle cx="30" cy="30" fill="none" r="25" stroke="currentColor" stroke-width="8"></circle>
+</svg>
+<svg class="absolute bottom-40 right-10 text-tertiary-fixed-dim" height="80" viewbox="0 0 80 80" width="80">
+<rect fill="none" height="60" stroke="currentColor" stroke-width="8" transform="rotate(15 40 40)" width="60" x="10" y="10"></rect>
+</svg>
+<svg class="absolute top-1/2 left-4 text-primary-container opacity-50" height="40" viewbox="0 0 40 40" width="40">
+<path d="M5,35 L20,5 L35,35 Z" fill="none" stroke="currentColor" stroke-width="6"></path>
+</svg>
+<div class="absolute top-40 right-1/4 w-12 h-12 rounded-full border-4 border-dashed border-outline opacity-30"></div>
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 pt-28 pb-32 px-6 max-w-4xl mx-auto">
+<!-- Timer Section -->
+<section class="flex flex-col items-center justify-center mb-12">
+<div class="relative w-72 h-72 flex items-center justify-center">
+<!-- SVG Timer Ring -->
+<svg class="absolute inset-0 w-full h-full transform -rotate-90">
+<circle class="text-surface-variant" cx="144" cy="144" fill="transparent" r="130" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary-container" cx="144" cy="144" fill="transparent" r="130" stroke="currentColor" stroke-dasharray="816" stroke-dashoffset="200" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<!-- Timer Text -->
+<div class="text-center z-20">
+<span class="font-h1 text-6xl text-zinc-900 block">25:00</span>
+<span class="font-label-bold text-primary uppercase tracking-widest">Focus Mode</span>
+</div>
+</div>
+<!-- Timer Controls -->
+<div class="flex gap-4 mt-8">
+<button class="bg-white border-[2.5px] border-zinc-900 shadow-[4px_4px_0px_0px_#1A1A1A] px-8 py-3 rounded-xl active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-2 font-label-bold">
+<span class="material-symbols-outlined">play_arrow</span> Start
+                </button>
+<button class="bg-white border-[2.5px] border-zinc-900 shadow-[4px_4px_0px_0px_#1A1A1A] p-3 rounded-xl active:translate-y-0.5 active:shadow-none transition-all">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</section>
+<!-- Bento Grid / Cards Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Mood Card -->
+<div class="bg-white border-[2.5px] border-zinc-900 shadow-[8px_8px_0px_0px_#8B5CF6] p-6 rounded-2xl relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h3 class="font-h3 text-zinc-900">Current Mood</h3>
+<p class="font-body-md text-on-surface-variant">Calm &amp; Focused</p>
+</div>
+<span class="material-symbols-outlined text-4xl text-primary" data-weight="fill">sentiment_satisfied</span>
+</div>
+<div class="flex gap-2 flex-wrap">
+<span class="px-4 py-1 rounded-full border-2 border-zinc-900 bg-secondary-fixed text-on-secondary-fixed font-label-bold text-xs">Deep Work</span>
+<span class="px-4 py-1 rounded-full border-2 border-zinc-900 bg-tertiary-fixed text-on-tertiary-fixed font-label-bold text-xs">Quiet</span>
+</div>
+</div>
+<!-- Session Stats -->
+<div class="bg-white border-[2.5px] border-zinc-900 shadow-[8px_8px_0px_0px_#FC79BD] p-6 rounded-2xl">
+<h3 class="font-h3 text-zinc-900 mb-4">Progress</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-body-md">Daily Goal</span>
+<span class="font-label-bold">3/4 Sessions</span>
+</div>
+<div class="w-full bg-surface-variant h-4 rounded-full border-2 border-zinc-900 overflow-hidden">
+<div class="bg-secondary-container h-full w-3/4"></div>
+</div>
+</div>
+</div>
+<!-- Task List (Sticker Card) -->
+<div class="md:col-span-2 bg-white border-[2.5px] border-zinc-900 shadow-[4px_4px_0px_0px_#1A1A1A] rounded-2xl p-6 relative">
+<!-- Sticker Tag -->
+<div class="absolute -top-4 -right-2 bg-tertiary-fixed-dim border-2 border-zinc-900 px-4 py-1 rounded-lg rotate-3 shadow-[2px_2px_0px_0px_#1A1A1A] font-label-bold">
+                    UP NEXT
+                </div>
+<h3 class="font-h3 text-zinc-900 mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined">checklist</span>
+                    Session Tasks
+                </h3>
+<div class="space-y-3">
+<!-- Task Item 1 -->
+<div class="flex items-center gap-4 p-4 border-2 border-zinc-900 rounded-xl bg-[#FDFBF7] hover:bg-zinc-50 transition-colors cursor-pointer group">
+<div class="w-6 h-6 border-2 border-zinc-900 rounded bg-white flex items-center justify-center group-active:scale-90">
+<span class="material-symbols-outlined text-sm text-primary-container opacity-0 group-hover:opacity-100">check</span>
+</div>
+<span class="font-body-lg flex-grow">Outline the mental wellness roadmap</span>
+<span class="font-label-caps text-on-surface-variant">15m</span>
+</div>
+<!-- Task Item 2 -->
+<div class="flex items-center gap-4 p-4 border-2 border-zinc-900 rounded-xl bg-white hover:bg-zinc-50 transition-colors cursor-pointer group">
+<div class="w-6 h-6 border-2 border-zinc-900 rounded bg-white flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-primary-container opacity-0">check</span>
+</div>
+<span class="font-body-lg flex-grow">Brainstorm confetti system shapes</span>
+<span class="font-label-caps text-on-surface-variant">10m</span>
+</div>
+<!-- Task Item 3 (Completed) -->
+<div class="flex items-center gap-4 p-4 border-2 border-zinc-900 rounded-xl bg-surface-variant opacity-60">
+<div class="w-6 h-6 border-2 border-zinc-900 rounded bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-sm text-white" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="font-body-lg flex-grow line-through">Select primary violet palette</span>
+<span class="material-symbols-outlined text-on-surface-variant">done_all</span>
+</div>
+</div>
+<button class="mt-6 w-full py-3 border-2 border-dashed border-zinc-400 rounded-xl font-label-bold text-on-surface-variant hover:border-primary hover:text-primary transition-all">
+                    + Add New Task
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 bg-white dark:bg-zinc-900 border-t-[2.5px] border-zinc-900 shadow-[0_-4px_0px_0px_#1A1A1A] px-4 pb-safe">
+<button class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-[#8B5CF6] transition-colors">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="font-['Epilogue'] text-xs font-bold uppercase tracking-wider">Check-in</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-[#8B5CF6] text-white rounded-xl px-4 py-1 shadow-[2px_2px_0px_0px_#1A1A1A] scale-95 duration-100">
+<span class="material-symbols-outlined">timer</span>
+<span class="font-['Epilogue'] text-xs font-bold uppercase tracking-wider">Focus</span>
+</button>
+<button class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-[#8B5CF6] transition-colors">
+<span class="material-symbols-outlined">equalizer</span>
+<span class="font-['Epilogue'] text-xs font-bold uppercase tracking-wider">Stats</span>
+</button>
+<button class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-[#8B5CF6] transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Epilogue'] text-xs font-bold uppercase tracking-wider">Profile</span>
+</button>
+</footer>
+</body></html>

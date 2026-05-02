@@ -1,11 +1,14 @@
 import React, { useState, createContext, useContext, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Session from './pages/Session';
 import Reflection from './pages/Reflection';
 import Dashboard from './pages/Dashboard';
-import { Layout, Home as HomeIcon, BarChart2, User, LogOut, Brain } from 'lucide-react';
+import Onboarding from './pages/Onboarding';
+import Profile from './pages/Profile';
+import Break from './pages/Break';
 import { handleLogin, handleLogout, getUser } from './services/appid';
+import { setAccessToken } from './services/api';
 
 export const AuthContext = createContext();
 
@@ -16,42 +19,74 @@ function Navbar() {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', icon: HomeIcon, label: 'Focus' },
-    { path: '/dashboard', icon: BarChart2, label: 'Stats' },
+    { path: '/', icon: 'edit_note', label: 'Check-in' },
+    { path: '/session', icon: 'timer', label: 'Focus' },
+    { path: '/dashboard', icon: 'equalizer', label: 'Stats' },
+    { path: '/profile', icon: 'person', label: 'Profile' },
   ];
 
   return (
-    <nav className="fixed left-0 top-0 h-full w-20 flex flex-col items-center py-8 bg-white/[0.02] border-r border-white/5 backdrop-blur-xl z-50">
-      <div className="mb-12">
-        <Brain className="w-8 h-8 text-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.5)]" />
-      </div>
-      
-      <div className="flex-1 flex flex-col gap-8">
+    <>
+      {/* Top Bar for Desktop */}
+      <nav className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#FDFBF7] border-b-[2.5px] border-zinc-900 shadow-[4px_4px_0px_0px_#1A1A1A]">
+        <div className="flex items-center gap-4">
+          <Link to="/" className="text-2xl font-black tracking-tight text-zinc-900 font-h1">MindMap</Link>
+        </div>
+        <div className="hidden md:flex gap-8 items-center h-full">
+          {navItems.map((item) => (
+            <Link 
+              key={item.path}
+              to={item.path}
+              className={`font-h3 font-bold transition-all h-full flex items-center mt-1 border-b-4 ${
+                location.pathname === item.path 
+                  ? 'text-[#8B5CF6] border-[#8B5CF6]' 
+                  : 'text-zinc-600 border-transparent hover:text-zinc-900'
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+        <div className="flex items-center gap-4">
+          {user ? (
+            <button onClick={handleLogout} className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-zinc-100 transition-all active:translate-y-0.5">
+              <span className="material-symbols-outlined text-zinc-900">logout</span>
+            </button>
+          ) : (
+            <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-zinc-100">
+              <span className="material-symbols-outlined text-zinc-900">account_circle</span>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      {/* Bottom Bar for Mobile */}
+      <nav className="fixed bottom-0 left-0 w-full z-50 md:hidden flex justify-around items-center h-20 pb-safe px-4 bg-white border-t-[2.5px] border-zinc-900 shadow-[0_-4px_0px_0px_#1A1A1A]">
         {navItems.map((item) => (
           <Link 
             key={item.path}
             to={item.path}
-            className={`p-3 rounded-2xl transition-all duration-300 ${
+            className={`flex flex-col items-center justify-center transition-all px-6 py-2 rounded-xl ${
               location.pathname === item.path 
-                ? 'bg-indigo-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.4)]' 
-                : 'text-slate-500 hover:text-indigo-400 hover:bg-white/5'
+                ? 'bg-[#8B5CF6] text-white shadow-[2px_2px_0px_0px_#1A1A1A]' 
+                : 'text-zinc-500 hover:text-[#8B5CF6]'
             }`}
           >
-            <item.icon size={24} />
+            <span className="material-symbols-outlined">{item.icon}</span>
+            <span className="font-h3 text-[10px] font-bold uppercase tracking-wider mt-0.5">{item.label}</span>
           </Link>
         ))}
-      </div>
-
-      {user && (
-        <button 
-          onClick={handleLogout}
-          className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/5 rounded-2xl transition-all"
-        >
-          <LogOut size={24} />
-        </button>
-      )}
-    </nav>
+      </nav>
+    </>
   );
+}
+
+function SessionRoute({ children }) {
+  const session = sessionStorage.getItem('currentSession');
+  if (!session) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
 }
 
 function App() {
@@ -59,58 +94,57 @@ function App() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      const tokensStr = sessionStorage.getItem('appid_tokens');
+      if (tokensStr) {
+        const tokens = JSON.parse(tokensStr);
+        setAccessToken(tokens.accessToken);
+      }
       const currentUser = await getUser();
+      console.log('Current User Auth Object:', currentUser);
       setUser(currentUser);
     };
     checkAuth();
   }, []);
 
   const login = async () => {
-    await handleLogin();
+    const tokens = await handleLogin();
+    if (tokens) {
+      setAccessToken(tokens.accessToken);
+    }
     const currentUser = await getUser();
     setUser(currentUser);
   };
 
   const logout = async () => {
     await handleLogout();
+    setAccessToken(null);
     setUser(null);
+    sessionStorage.removeItem('currentSession');
   };
 
   return (
     <AuthContext.Provider value={{ user, handleLogin: login, handleLogout: logout }}>
       <Router>
-        <div className="flex bg-[#050510] min-h-screen text-white selection:bg-indigo-500/30">
-          <div className="bg-gradient-animate" />
-          <div className="blob w-[500px] h-[500px] bg-indigo-600/10 -top-20 -left-20" />
-          <div className="blob w-[400px] h-[400px] bg-violet-600/10 bottom-20 right-20" style={{ animationDelay: '-5s' }} />
-          
+        <div className="min-h-screen bg-[#FFFDF5] text-[#1d1a23] font-body-md selection:bg-primary-container selection:text-white overflow-x-hidden">
           <Navbar />
           
-          <main className="flex-1 ml-20 p-8 lg:p-12 overflow-y-auto">
-            <header className="max-w-6xl mx-auto mb-12 flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                  <Brain className="text-white w-6 h-6" />
-                </div>
-                <h1 className="text-2xl font-bold tracking-tight">MindMap</h1>
-              </div>
-              
-              {user && (
-                <div className="flex items-center gap-4 px-4 py-2 bg-white/5 rounded-2xl border border-white/5">
-                  <span className="text-sm text-slate-400">Welcome, <span className="text-white font-bold">{user.name}</span></span>
-                  <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center text-indigo-400 font-bold">
-                    {user.name.charAt(0)}
-                  </div>
-                </div>
-              )}
-            </header>
-
-            <div className="max-w-6xl mx-auto">
+          <main className="pt-24 pb-32 min-h-screen relative">
+            {/* Polka Dot Decoration */}
+            <div className="polka-dot-strip opacity-10 absolute top-16 left-0"></div>
+            
+            <div className="max-w-6xl mx-auto px-6 relative z-10">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/session" element={<Session />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/session" element={
+                  <SessionRoute>
+                    <Session />
+                  </SessionRoute>
+                } />
                 <Route path="/reflection" element={<Reflection />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/break" element={<Break />} />
               </Routes>
             </div>
           </main>

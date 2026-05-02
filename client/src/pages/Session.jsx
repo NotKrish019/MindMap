@@ -1,9 +1,70 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause, SkipForward, Music, Brain, Timer, Volume2 } from 'lucide-react';
+
+import api from '../services/api';
+import Whiteboard from '../components/Whiteboard';
 
 // --- Sub-Components ---
+
+const LofiPlayer = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(false);
+
+  return (
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+      <AnimatePresence>
+        {showPlayer && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            className="neobrutal-card neobrutal-shadow-lg bg-white p-4 rounded-3xl border-[2.5px] border-zinc-900 w-72"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="font-h3 text-sm">MindMap Lofi</h4>
+              <button onClick={() => setShowPlayer(false)} className="material-symbols-outlined text-zinc-400 hover:text-zinc-900 transition-colors">close</button>
+            </div>
+            <div className="relative aspect-video rounded-xl overflow-hidden border-2 border-zinc-900 bg-zinc-900">
+               {isPlaying ? (
+                 <iframe 
+                   width="100%" 
+                   height="100%" 
+                   src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=0&controls=0" 
+                   title="Lofi Radio" 
+                   frameBorder="0" 
+                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                   allowFullScreen
+                 ></iframe>
+               ) : (
+                 <div className="absolute inset-0 flex items-center justify-center bg-zinc-800 text-white flex-col gap-2">
+                   <span className="material-symbols-outlined text-4xl">music_note</span>
+                   <p className="text-[10px] font-label-bold uppercase">Click Play to Stream</p>
+                 </div>
+               )}
+            </div>
+            <button 
+              onClick={() => setIsPlaying(!isPlaying)}
+              className={`w-full mt-4 py-2 rounded-xl border-2 border-zinc-900 font-label-bold text-xs uppercase tracking-widest transition-all ${
+                isPlaying ? 'bg-red-50 text-red-600' : 'bg-primary text-white'
+              }`}
+            >
+              {isPlaying ? 'Stop Music' : 'Start Radio'}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <button 
+        onClick={() => setShowPlayer(!showPlayer)}
+        className="w-14 h-14 bg-white border-[2.5px] border-zinc-900 rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_0px_#1A1A1A] active:translate-y-0.5 active:shadow-none transition-all hover:bg-zinc-50"
+      >
+        <span className={`material-symbols-outlined text-3xl ${isPlaying ? 'animate-pulse text-primary' : 'text-zinc-900'}`}>
+          {isPlaying ? 'graphic_eq' : 'music_note'}
+        </span>
+      </button>
+    </div>
+  );
+};
 
 const BreathingAnimation = () => {
   const [stage, setStage] = useState('Breathe in...');
@@ -17,35 +78,46 @@ const BreathingAnimation = () => {
     };
     cycle();
     const interval = setInterval(() => {
-      setCycleCount(prev => prev + 1);
-      cycle();
+      if (cycleCount < 3) {
+        setCycleCount(prev => prev + 1);
+        cycle();
+      } else {
+        clearInterval(interval);
+      }
     }, 19000);
     return () => clearInterval(interval);
-  }, []);
+  }, [cycleCount]);
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-12">
-      <div className="relative w-64 h-64 flex items-center justify-center">
-        <div className="absolute w-full h-full rounded-full border-2 border-indigo-500/10" />
-        <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/40 to-violet-500/40 rounded-full animate-breathe-478 blur-md shadow-[0_0_50px_rgba(99,102,241,0.2)]" />
-        <div className="absolute top-0 right-0 p-4">
-          <span className="text-[10px] font-bold text-indigo-400 bg-indigo-500/10 px-2 py-1 rounded-full border border-indigo-500/10 uppercase tracking-widest">
-            Cycle {cycleCount}/3
-          </span>
-        </div>
+    <div className="flex flex-col items-center justify-center relative w-full h-full">
+      {/* Cycle Indicator at the top */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30">
+        <span className="font-label-bold text-[9px] text-primary bg-white border-2 border-primary/20 px-3 py-1 rounded-full uppercase tracking-[0.2em] shadow-sm">
+          Cycle {cycleCount}/3
+        </span>
       </div>
-      <div className="text-center">
-        <motion.p 
-          key={stage}
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-3xl font-light text-indigo-100 tracking-tight"
-        >
-          {stage}
-        </motion.p>
-        <p className="text-[10px] text-slate-500 mt-4 uppercase tracking-[0.2em] font-bold opacity-60">
-          Syncing mind and focus
-        </p>
+
+      <div className="relative w-56 h-56 flex items-center justify-center">
+        {/* Background Guide Ring */}
+        <div className="absolute w-full h-full rounded-full border-[2px] border-dashed border-zinc-200" />
+        
+        {/* The Breathing Orb */}
+        <div className="w-16 h-16 bg-primary/30 rounded-full animate-breathe-478 border-[2.5px] border-zinc-900 neobrutal-shadow shadow-primary/20" />
+        
+        {/* Stage Text Overlayed for perfect centering */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <AnimatePresence mode="wait">
+            <motion.p 
+              key={stage}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -5 }}
+              className="text-xl font-h3 font-black text-zinc-900 drop-shadow-sm"
+            >
+              {stage}
+            </motion.p>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
@@ -53,90 +125,56 @@ const BreathingAnimation = () => {
 
 const MoodCard = ({ data }) => {
   const { mood, energy, focus, stress } = data;
-  const bars = [
-    { label: 'Energy', value: energy, color: 'bg-yellow-400' },
-    { label: 'Focus', value: focus, color: 'bg-blue-400' },
-    { label: 'Stress', value: stress, color: 'bg-red-400' },
-  ];
+  
+  const moodMap = {
+    low_mood: { icon: 'sentiment_dissatisfied', color: 'text-blue-500' },
+    anxious: { icon: 'psychology_alt', color: 'text-red-500' },
+    burned_out: { icon: 'battery_0_bar', color: 'text-zinc-500' },
+    focused: { icon: 'center_focus_strong', color: 'text-primary' },
+    calm: { icon: 'self_improvement', color: 'text-green-500' },
+  };
+
+  const currentMood = moodMap[mood] || moodMap.calm;
 
   return (
-    <div className="glass-card flex-1">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-white/5 rounded-lg uppercase text-[10px] font-bold tracking-[0.2em] text-indigo-400">
-          Current State: {mood.replace('_', ' ')}
+    <div className="neobrutal-card neobrutal-shadow p-6 rounded-2xl bg-white relative overflow-hidden">
+      <div className="flex justify-between items-start mb-4">
+        <div>
+          <h3 className="font-h3 text-zinc-900">Current State</h3>
+          <p className="font-body-md text-on-surface-variant capitalize">{mood.replace('_', ' ')}</p>
         </div>
+        <span className={`material-symbols-outlined text-4xl ${currentMood.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>
+          {currentMood.icon}
+        </span>
       </div>
-      <div className="space-y-4">
-        {bars.map(bar => (
-          <div key={bar.label}>
-            <div className="flex justify-between text-[10px] mb-1.5 uppercase tracking-widest text-slate-500 font-bold">
-              <span>{bar.label}</span>
-              <span>{bar.value}/10</span>
-            </div>
-            <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${bar.value * 10}%` }}
-                className={`h-full ${bar.color} shadow-[0_0_8px_rgba(255,255,255,0.2)]`}
-              />
-            </div>
-          </div>
-        ))}
+      <div className="flex gap-2 flex-wrap">
+        <span className="px-3 py-1 rounded-full border-2 border-zinc-900 bg-secondary-fixed text-on-secondary-fixed font-label-bold text-[10px] uppercase">
+          Energy {energy}/10
+        </span>
+        <span className="px-3 py-1 rounded-full border-2 border-zinc-900 bg-tertiary-fixed text-on-tertiary-fixed font-label-bold text-[10px] uppercase">
+          Focus {focus}/10
+        </span>
       </div>
     </div>
   );
 };
 
-const MusicPlayer = () => {
-  const playlistId = 'PLfP6i5T0-DkIMLNRwmJpRBs4PJvxfgwBg';
-  
+const SessionStats = ({ current, total }) => {
+  const progress = (current / total) * 100;
   return (
-    <div className="glass-card overflow-hidden !p-0 border-indigo-500/10">
-      <div className="p-5 border-b border-white/5 flex items-center gap-4 bg-white/[0.02]">
-        <div className="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center relative">
-           <Music className="w-5 h-5 text-indigo-400" />
-           <div className="absolute -bottom-1 -right-1 flex gap-0.5">
-             {[1,2,3].map(i => (
-               <motion.div 
-                key={i}
-                animate={{ height: [2, 8, 2] }}
-                transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.3 }}
-                className="w-0.5 bg-indigo-400 rounded-full"
-               />
-             ))}
-           </div>
+    <div className="neobrutal-card neobrutal-shadow p-6 rounded-2xl bg-white">
+      <h3 className="font-h3 text-zinc-900 mb-4">Progress</h3>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center text-sm">
+          <span className="font-body-md">Session Blocks</span>
+          <span className="font-label-bold">{current}/{total} Completed</span>
         </div>
-        <div>
-          <h3 className="text-xs font-bold uppercase tracking-widest text-slate-200">MindMap Lofi</h3>
-          <p className="text-[10px] text-slate-500 font-medium">Synced Playlist Active</p>
-        </div>
-      </div>
-      
-      <div className="h-2 w-full bg-white/5 relative overflow-hidden">
-        <motion.div 
-          animate={{ x: ['-100%', '100%'] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent"
-        />
-        <div className="opacity-0 absolute pointer-events-none -top-999">
-          <iframe 
-            width="10" 
-            height="10" 
-            src={`https://www.youtube-nocookie.com/embed/videoseries?list=${playlistId}&autoplay=0&controls=1&modestbranding=1&enablejsapi=1`} 
-            title="Lofi Music"
-            frameBorder="0" 
-            allow="autoplay; encrypted-media" 
-          ></iframe>
-        </div>
-      </div>
-      
-      <div className="p-5 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-          <Volume2 className="w-3 h-3 text-indigo-500" />
-          <span>Lo-Fi Focus Mode</span>
-        </div>
-        <div className="text-[9px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 font-bold border border-indigo-500/10">
-          LIVE
+        <div className="w-full bg-zinc-100 h-4 rounded-full border-2 border-zinc-900 overflow-hidden">
+          <motion.div 
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
+            className="bg-secondary-container h-full"
+          />
         </div>
       </div>
     </div>
@@ -153,6 +191,7 @@ function Session() {
   const [isBreak, setIsBreak] = useState(false);
   const navigate = useNavigate();
   const timerRef = useRef(null);
+  const [showWhiteboard, setShowWhiteboard] = useState(false);
 
   useEffect(() => {
     const data = JSON.parse(sessionStorage.getItem('currentSession') || 'null');
@@ -172,26 +211,55 @@ function Session() {
     return () => clearInterval(timerRef.current);
   }, [isActive, timeLeft, sessionData]);
 
+  const saveProgress = async (blockIdx, extraSeconds = 0) => {
+    if (!sessionData) return;
+    try {
+      const completedBlocks = sessionData.sessionPlan.blocks.slice(0, blockIdx);
+      const fullMinutes = completedBlocks.reduce((acc, b) => acc + b.durationMinutes, 0);
+      const partialMinutes = Math.floor(extraSeconds / 60);
+      const totalMinutes = fullMinutes + partialMinutes;
+      
+      if (totalMinutes === 0) return;
+
+      await api.post('/saveSession', {
+        ...sessionData,
+        actualMinutes: totalMinutes,
+        date: new Date().toISOString().split('T')[0],
+        partial: true
+      });
+      console.log('Progress saved:', totalMinutes, 'mins');
+    } catch (err) {
+      console.error('Failed to save progress:', err);
+    }
+  };
+
   const handleBlockEnd = () => {
     if (!isBreak) {
-      // Start Break
       setIsBreak(true);
-      // Fixed 3 cycles of 4-7-8 breathing (19s each = 57s)
       const breakDuration = sessionData.sessionPlan.blocks[currentBlockIndex].breakAfter.type === 'breathing' ? 57 : (sessionData.sessionPlan.blocks[currentBlockIndex].breakAfter.durationMinutes * 60);
       setTimeLeft(breakDuration);
-      setIsActive(true); // Auto-start the break
+      setIsActive(true);
+      
+      // Save full minutes for the block just completed
+      saveProgress(currentBlockIndex + 1);
     } else {
-      // End Break, Start Next Block
       setIsBreak(false);
       const nextIdx = currentBlockIndex + 1;
       if (nextIdx < sessionData.sessionPlan.blocks.length) {
         setCurrentBlockIndex(nextIdx);
         setTimeLeft(sessionData.sessionPlan.blocks[nextIdx].durationMinutes * 60);
-        setIsActive(true); // Auto-start the next study block
+        setIsActive(true);
       } else {
         navigate('/reflection');
       }
     }
+  };
+
+  const finishEarly = () => {
+    const initialDuration = sessionData.sessionPlan.blocks[currentBlockIndex].durationMinutes * 60;
+    const elapsedSeconds = isBreak ? 0 : (initialDuration - timeLeft);
+    saveProgress(currentBlockIndex, elapsedSeconds);
+    navigate('/reflection');
   };
 
   const formatTime = (seconds) => {
@@ -200,98 +268,190 @@ function Session() {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  const [breakMode, setBreakMode] = useState('breathing'); // 'breathing' or 'doodle'
+
   if (!sessionData) return null;
 
   const currentBlock = sessionData.sessionPlan.blocks[currentBlockIndex];
+  const totalBlocks = sessionData.sessionPlan.blocks.length;
+  
+  // Calculate progress for the timer ring
+  const initialDuration = isBreak 
+    ? (currentBlock.breakAfter.type === 'breathing' ? 57 : currentBlock.breakAfter.durationMinutes * 60)
+    : currentBlock.durationMinutes * 60;
+  const progressOffset = 816 - (timeLeft / initialDuration) * 816;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2 space-y-8">
-        <motion.div 
-          key={isBreak ? 'break' : 'study'}
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="glass-card flex flex-col items-center justify-center min-h-[450px] relative overflow-hidden"
-        >
-          {isBreak && currentBlock.breakAfter.type === 'breathing' ? (
-            <BreathingAnimation />
-          ) : (
-            <>
-              <div className="text-center mb-12">
-                <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-indigo-400 mb-4 opacity-80">
-                  {isBreak ? 'Relaxation in Progress' : `Focusing on: ${currentBlock.subject}`}
-                </p>
-                <h2 className="text-9xl font-black tracking-tighter tabular-nums bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
-                  {formatTime(timeLeft)}
-                </h2>
-              </div>
-
-              <div className="flex gap-6">
-                <button 
-                  onClick={() => setIsActive(!isActive)}
-                  className="w-20 h-20 flex items-center justify-center rounded-full bg-white text-slate-900 hover:scale-110 transition-transform shadow-xl shadow-white/5"
-                >
-                  {isActive ? <Pause size={28} className="fill-current" /> : <Play size={28} className="fill-current ml-1" />}
-                </button>
-                <button 
-                  onClick={handleBlockEnd}
-                  className="w-20 h-20 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-colors"
-                >
-                  <SkipForward size={24} />
-                </button>
-              </div>
-            </>
-          )}
-
-          {isBreak && (
-            <div className="absolute bottom-12 text-center px-12">
-              <p className="text-indigo-200/60 text-xs font-medium tracking-wide leading-relaxed">
-                {currentBlock.breakAfter.instruction}
-              </p>
-            </div>
-          )}
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="glass-card !p-6">
-            <div className="flex items-center gap-2 mb-6 text-indigo-400">
-              <Timer className="w-4 h-4" />
-              <h3 className="text-[10px] font-bold uppercase tracking-widest">Upcoming Blocks</h3>
-            </div>
-            <div className="space-y-3">
-              {sessionData.sessionPlan.blocks.slice(currentBlockIndex + 1).map((b, i) => (
-                <div key={i} className="flex justify-between items-center text-xs p-4 bg-white/[0.03] rounded-2xl border border-white/5">
-                  <span className="text-slate-300 font-medium">{b.subject}</span>
-                  <span className="text-slate-500 font-bold">{b.durationMinutes}m</span>
+    <div className="max-w-4xl mx-auto space-y-12 pb-24 relative">
+      {/* Timer Section */}
+      <section className="flex flex-col items-center justify-center pt-8">
+        <div className="relative w-80 h-80 flex items-center justify-center">
+          {/* Decoration Background Circle */}
+          <div className="absolute inset-0 w-80 h-80 bg-primary-fixed-dim/20 rounded-full blur-3xl -z-10" />
+          
+          {/* SVG Timer Ring */}
+          <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+            <circle className="text-zinc-100" cx="160" cy="160" fill="transparent" r="130" stroke="currentColor" strokeWidth="16" />
+            <motion.circle 
+              className="text-primary" 
+              cx="160" cy="160" fill="transparent" r="130" 
+              stroke="currentColor" 
+              strokeWidth="16"
+              strokeDasharray="816"
+              animate={{ strokeDashoffset: progressOffset }}
+              transition={{ duration: 1, ease: "linear" }}
+              strokeLinecap="round" 
+            />
+          </svg>
+          
+          {/* Timer Content */}
+          <AnimatePresence mode="wait">
+            {isBreak ? (
+              <div className="z-20 w-full h-full flex flex-col items-center justify-center p-8">
+                <BreathingAnimation />
+                <div className="absolute bottom-12 flex flex-col items-center gap-2">
+                  <span className="font-h1 text-4xl text-primary tabular-nums">{formatTime(timeLeft)}</span>
+                  <p className="font-label-bold text-[10px] text-primary uppercase tracking-[0.2em] bg-white border-2 border-primary/20 px-4 py-1 rounded-full">
+                     Recharging...
+                  </p>
                 </div>
-              ))}
-              {currentBlockIndex === sessionData.sessionPlan.blocks.length - 1 && (
-                <p className="text-xs text-slate-500 italic text-center py-6 opacity-60">Final block in progress</p>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="text-center z-20">
+                <span className="font-h1 text-7xl text-zinc-900 block tabular-nums mb-1">{formatTime(timeLeft)}</span>
+                <span className="font-label-bold text-primary uppercase tracking-[0.2em] text-[10px] bg-primary/5 px-4 py-1.5 rounded-full border border-primary/10">
+                   {currentBlock.subject}
+                </span>
+              </div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Timer Controls */}
+        <div className="flex flex-col items-center gap-6 mt-20">
+          <div className="flex gap-6">
+            <button 
+              onClick={() => setIsActive(!isActive)}
+              disabled={isBreak}
+              className={`neobrutal-card neobrutal-shadow px-10 py-5 rounded-2xl active:translate-y-0.5 active:shadow-none transition-all flex items-center gap-3 font-label-bold text-xl ${
+                isBreak ? 'bg-zinc-100 text-zinc-400 cursor-not-allowed opacity-60' : (isActive ? 'bg-white text-zinc-900' : 'bg-primary text-white')
+              }`}
+            >
+              <span className="material-symbols-outlined text-2xl">{isActive ? (isBreak ? 'lock' : 'pause') : 'play_arrow'}</span>
+              {isBreak ? 'Break Locked' : (isActive ? 'Pause' : 'Start')}
+            </button>
+            <button 
+              onClick={handleBlockEnd}
+              className="neobrutal-card neobrutal-shadow p-5 bg-white rounded-2xl active:translate-y-0.5 active:shadow-none transition-all"
+            >
+              <span className="material-symbols-outlined text-2xl">skip_next</span>
+            </button>
           </div>
           
-          <div className="glass-card !p-6">
-             <div className="flex items-center gap-2 mb-6 text-indigo-400">
-              <Brain className="w-4 h-4" />
-              <h3 className="text-[10px] font-bold uppercase tracking-widest">Session Insight</h3>
-            </div>
-            <p className="text-indigo-100/70 leading-relaxed text-sm italic">
-              "{currentBlock.tip}"
+          {!isBreak && (
+            <button 
+              onClick={finishEarly}
+              className="text-[10px] font-label-bold uppercase tracking-[0.2em] text-outline hover:text-zinc-900 transition-colors"
+            >
+              Finish Session Early & Save Stats
+            </button>
+          )}
+        </div>
+      </section>
+
+      {/* Persistent Whiteboard Toggle (Left Side) */}
+      <div className="fixed bottom-6 left-6 z-50 flex flex-col items-start gap-3">
+        <AnimatePresence>
+          {showWhiteboard && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8, x: -20 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.8, x: -20 }}
+              className="neobrutal-card neobrutal-shadow-lg bg-white rounded-3xl border-[2.5px] border-zinc-900 w-[400px] h-[350px] overflow-hidden"
+            >
+              <Whiteboard onClose={() => setShowWhiteboard(false)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <button 
+          onClick={() => setShowWhiteboard(!showWhiteboard)}
+          className="w-14 h-14 bg-white border-[2.5px] border-zinc-900 rounded-2xl flex items-center justify-center shadow-[4px_4px_0px_0px_#1A1A1A] active:translate-y-0.5 active:shadow-none transition-all hover:bg-zinc-50"
+        >
+          <span className={`material-symbols-outlined text-3xl ${showWhiteboard ? 'text-primary' : 'text-zinc-900'}`}>
+            draw
+          </span>
+        </button>
+      </div>
+
+      <LofiPlayer />
+
+      {/* Bento Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <MoodCard data={sessionData} />
+        <SessionStats current={currentBlockIndex} total={totalBlocks} />
+        
+        {/* Session Insight Card */}
+        <div className="md:col-span-2 neobrutal-card neobrutal-shadow p-8 rounded-3xl bg-tertiary-fixed flex flex-col md:flex-row gap-6 items-center">
+          <div className="w-16 h-16 rounded-full bg-white border-2 border-zinc-900 flex items-center justify-center flex-shrink-0 rotate-3">
+             <span className="material-symbols-outlined text-3xl text-tertiary">lightbulb</span>
+          </div>
+          <div>
+            <h3 className="font-h3 text-xl mb-2 italic">MindMap Insight</h3>
+            <p className="font-body-md text-zinc-800 leading-relaxed">
+              "{currentBlock.tip || sessionData.sessionPlan.empathyNote}"
             </p>
           </div>
         </div>
-      </div>
 
-      <div className="space-y-8">
-        <MoodCard data={sessionData} />
-        <MusicPlayer />
-        
-        <div className="glass-card bg-indigo-500/[0.03] border-indigo-500/10 !p-6">
-          <h3 className="text-[10px] font-bold uppercase tracking-widest text-indigo-400/60 mb-4">Note from AI</h3>
-          <p className="text-sm text-indigo-200/80 italic leading-relaxed">
-            "{sessionData.sessionPlan.empathyNote}"
-          </p>
+        {/* Task List / Blocks */}
+        <div className="md:col-span-2 neobrutal-card neobrutal-shadow rounded-3xl p-8 relative bg-white">
+          <div className="absolute -top-4 -right-2 bg-secondary-fixed border-2 border-zinc-900 px-4 py-1 rounded-lg rotate-3 shadow-[2px_2px_0px_0px_#1A1A1A] font-label-bold text-xs">
+            SESSION ROADMAP
+          </div>
+          <h3 className="font-h3 text-zinc-900 mb-8 flex items-center gap-3">
+            <span className="material-symbols-outlined">checklist</span>
+            Study Blocks
+          </h3>
+          <div className="space-y-4">
+            {sessionData.sessionPlan.blocks.map((block, idx) => (
+              <div 
+                key={idx}
+                className={`flex items-center gap-4 p-5 border-2 border-zinc-900 rounded-2xl transition-all ${
+                  idx === currentBlockIndex 
+                    ? 'bg-primary-fixed shadow-[6px_6px_0px_0px_#1A1A1A] -translate-y-1' 
+                    : idx < currentBlockIndex 
+                      ? 'bg-green-50 opacity-80 shadow-[2px_2px_0px_0px_#1A1A1A]' 
+                      : 'bg-white hover:bg-zinc-50'
+                }`}
+              >
+                <div className={`w-10 h-10 border-2 border-zinc-900 rounded-xl flex items-center justify-center transition-colors ${
+                  idx < currentBlockIndex ? 'bg-green-500 text-white' : idx === currentBlockIndex ? 'bg-white' : 'bg-zinc-100'
+                }`}>
+                  {idx < currentBlockIndex ? (
+                    <span className="material-symbols-outlined font-black">check</span>
+                  ) : (
+                    <span className="font-label-bold">{idx + 1}</span>
+                  )}
+                </div>
+                <div className="flex-grow">
+                  <p className={`font-h3 text-lg ${idx < currentBlockIndex ? 'text-zinc-400' : 'text-zinc-900'}`}>
+                    {block.subject}
+                  </p>
+                  <p className="text-[10px] text-outline font-label-caps uppercase tracking-widest">{block.durationMinutes} minutes</p>
+                </div>
+                {idx === currentBlockIndex && (
+                  <div className="flex flex-col items-end">
+                    <span className="px-3 py-1 rounded-lg bg-white border-2 border-zinc-900 font-label-bold text-[10px] animate-pulse uppercase tracking-tighter">
+                      Current Task
+                    </span>
+                  </div>
+                )}
+                {idx < currentBlockIndex && (
+                   <span className="font-label-bold text-[10px] text-green-600 uppercase">Completed</span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Lexend:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#fffbff",
+                    "primary": "#6b38d4",
+                    "on-tertiary": "#ffffff",
+                    "primary-fixed-dim": "#d0bcff",
+                    "inverse-on-surface": "#f5eefb",
+                    "on-secondary-fixed": "#3d0026",
+                    "tertiary-container": "#956e00",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#fc79bd",
+                    "tertiary": "#765700",
+                    "on-secondary-fixed-variant": "#85145a",
+                    "primary-container": "#8455ef",
+                    "outline-variant": "#cbc3d7",
+                    "surface-bright": "#fef7ff",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "on-tertiary-fixed": "#261a00",
+                    "on-secondary-container": "#76014e",
+                    "on-primary-fixed-variant": "#5516be",
+                    "inverse-primary": "#d0bcff",
+                    "outline": "#7b7486",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#ede5f3",
+                    "surface-tint": "#6d3bd7",
+                    "on-primary-fixed": "#23005c",
+                    "on-primary-container": "#fffbff",
+                    "surface-container-highest": "#e7e0ed",
+                    "primary-fixed": "#e9ddff",
+                    "surface-dim": "#ded7e4",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#f3ebf8",
+                    "on-surface": "#1d1a23",
+                    "on-error-container": "#93000a",
+                    "surface-variant": "#e7e0ed",
+                    "secondary-fixed-dim": "#ffafd3",
+                    "secondary": "#a43073",
+                    "background": "#fef7ff",
+                    "on-background": "#1d1a23",
+                    "secondary-fixed": "#ffd8e7",
+                    "surface": "#fef7ff",
+                    "surface-container-low": "#f8f1fe",
+                    "inverse-surface": "#322f39",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-surface-variant": "#494454",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin": "24px",
+                    "lg": "40px",
+                    "xl": "64px",
+                    "gutter": "20px",
+                    "base": "8px",
+                    "xs": "4px",
+                    "sm": "12px",
+                    "md": "24px"
+            },
+            "fontFamily": {
+                    "h3": ["Epilogue"],
+                    "h1": ["Epilogue"],
+                    "h2": ["Epilogue"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "label-bold": ["Lexend"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "label-caps": ["Lexend"]
+            },
+            "fontSize": {
+                    "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "h1": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "h2": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "label-bold": ["14px", {"lineHeight": "1.0", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neobrutal-shadow {
+            box-shadow: 4px 4px 0px 0px rgba(26, 26, 26, 1);
+        }
+        .neobrutal-shadow-lg {
+            box-shadow: 8px 8px 0px 0px rgba(26, 26, 26, 1);
+        }
+        .neobrutal-shadow-active:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px rgba(26, 26, 26, 1);
+        }
+        .polka-dot-bg {
+            background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
+            background-size: 24px 24px;
+            opacity: 0.05;
+        }
+    </style>
+</head>
+<body class="bg-[#FFFDF5] text-on-background min-h-screen relative overflow-x-hidden font-body-md">
+<!-- Decorative Polka Dot Layer -->
+<div class="fixed inset-0 polka-dot-bg pointer-events-none"></div>
+<!-- Onboarding suppression logic: No TopAppBar or BottomNavBar as this is a transactional focus screen -->
+<main class="relative z-10 max-w-md mx-auto px-margin pt-xl pb-lg flex flex-col min-h-screen">
+<!-- Welcome Header Section -->
+<header class="text-center mb-md">
+<h1 class="font-h1 text-h1 text-on-background mb-xs">
+                Welcome to your MindMap
+            </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                Your playful companion for a clearer, calmer mind.
+            </p>
+</header>
+<!-- Illustration Canvas -->
+<div class="relative w-full aspect-square flex items-center justify-center mb-md">
+<!-- Geometric Confetti Decorations -->
+<div class="absolute top-4 left-4 w-12 h-12 bg-secondary-container border-[2.5px] border-zinc-900 rounded-full rotate-12 neobrutal-shadow"></div>
+<div class="absolute bottom-10 right-2 w-16 h-8 bg-tertiary-fixed-dim border-[2.5px] border-zinc-900 rounded-xl -rotate-6 neobrutal-shadow"></div>
+<div class="absolute top-1/2 -right-4 w-10 h-10 bg-primary-fixed border-[2.5px] border-zinc-900 rotate-45 neobrutal-shadow"></div>
+<!-- Main Hero Image: Playful Brain -->
+<div class="relative z-10 bg-white border-[2.5px] border-zinc-900 rounded-3xl p-6 neobrutal-shadow-lg">
+<img alt="Playful Brain Illustration" class="w-full h-auto" data-alt="A vibrant, playful illustration of a stylized human brain in a modern neobrutalist art style. The brain is rendered in soft lilac and cream tones with thick, bold black outlines. It is surrounded by colorful geometric confetti like stars, circles, and squiggles in pink, yellow, and violet. The overall aesthetic is energetic, optimistic, and welcoming, set against a clean cream background with a subtle paper texture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtSxTZEvxgcT3r90BeHScumKKlDbP1tN-XCxVOBrZEr6Un0mON_jRzMLVbINY5MhwXKcMF55hJX5xcFc1Wdr0Gm7dt0mvPB9zMGXts2KzM0ud_yNPszgakD2ouJvU_LASFDn39mlYyidi0sxZO7I1YVorKCZc3UUnjIqKOBVZSyqd-IcSsiBMrXmR1UUhUhLSfjLduTtwgRYUlLBipeB9xYVlDTo4XTNkiKTCLHXDDHgm123hQLs_YWXQX2Tj9QUWCLfUpQ6BTQ24"/>
+</div>
+</div>
+<!-- Steps List Section -->
+<section class="space-y-sm mb-xl">
+<!-- Step 1 -->
+<div class="bg-white border-[2.5px] border-zinc-900 p-md rounded-xl neobrutal-shadow flex items-start gap-md">
+<div class="bg-secondary-container text-on-secondary-container w-10 h-10 flex-shrink-0 border-2 border-zinc-900 rounded-full flex items-center justify-center font-h3">
+                    1
+                </div>
+<div>
+<h3 class="font-h3 text-h3 mb-xs text-on-background">Check-in daily.</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Capture your moods and thoughts with interactive stickers.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-white border-[2.5px] border-zinc-900 p-md rounded-xl neobrutal-shadow flex items-start gap-md">
+<div class="bg-primary-container text-white w-10 h-10 flex-shrink-0 border-2 border-zinc-900 rounded-full flex items-center justify-center font-h3">
+                    2
+                </div>
+<div>
+<h3 class="font-h3 text-h3 mb-xs text-on-background">Focus deeply.</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Guided sessions designed to help you reach clarity and flow.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-white border-[2.5px] border-zinc-900 p-md rounded-xl neobrutal-shadow flex items-start gap-md">
+<div class="bg-tertiary-container text-white w-10 h-10 flex-shrink-0 border-2 border-zinc-900 rounded-full flex items-center justify-center font-h3">
+                    3
+                </div>
+<div>
+<h3 class="font-h3 text-h3 mb-xs text-on-background">Grow together.</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Connect with your MindBuddies for shared wellness milestones.</p>
+</div>
+</div>
+</section>
+<!-- CTA Action -->
+<div class="mt-auto pt-md">
+<button class="w-full py-md bg-primary text-white border-[2.5px] border-zinc-900 rounded-xl font-h3 neobrutal-shadow-lg neobrutal-shadow-active transition-transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-sm">
+                Get Started
+                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<p class="text-center mt-md font-label-caps text-label-caps text-on-surface-variant tracking-widest">
+                ALREADY HAVE AN ACCOUNT? <span class="text-primary font-bold cursor-pointer underline underline-offset-4">LOG IN</span>
+</p>
+</div>
+</main>
+<!-- Decorative Floating Shapes -->
+<div class="fixed -bottom-10 -left-10 w-40 h-40 bg-secondary-container opacity-20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="fixed -top-10 -right-10 w-40 h-40 bg-primary-container opacity-20 rounded-full blur-3xl pointer-events-none"></div>
+</body></html>

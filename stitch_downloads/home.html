@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700;800;900&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;family=Lexend:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline": "#7b7486",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed": "#ffd8e7",
+                    "on-secondary-fixed-variant": "#85145a",
+                    "on-primary-fixed-variant": "#5516be",
+                    "inverse-surface": "#322f39",
+                    "surface-bright": "#fef7ff",
+                    "background": "#fef7ff",
+                    "on-tertiary-fixed": "#261a00",
+                    "primary-fixed-dim": "#d0bcff",
+                    "tertiary-container": "#956e00",
+                    "on-primary-fixed": "#23005c",
+                    "surface-tint": "#6d3bd7",
+                    "primary-container": "#8455ef",
+                    "surface-container-high": "#ede5f3",
+                    "tertiary": "#765700",
+                    "primary-fixed": "#e9ddff",
+                    "secondary": "#a43073",
+                    "on-error": "#ffffff",
+                    "inverse-on-surface": "#f5eefb",
+                    "on-background": "#1d1a23",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed-dim": "#f9bd22",
+                    "inverse-primary": "#d0bcff",
+                    "tertiary-fixed": "#ffdf9f",
+                    "on-secondary-fixed": "#3d0026",
+                    "on-secondary-container": "#76014e",
+                    "secondary-fixed-dim": "#ffafd3",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#ded7e4",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#5c4300",
+                    "on-surface": "#1d1a23",
+                    "surface-container": "#f3ebf8",
+                    "surface-variant": "#e7e0ed",
+                    "on-primary-container": "#fffbff",
+                    "surface-container-low": "#f8f1fe",
+                    "outline-variant": "#cbc3d7",
+                    "surface-container-highest": "#e7e0ed",
+                    "primary": "#6b38d4",
+                    "on-error-container": "#93000a",
+                    "error": "#ba1a1a",
+                    "error-container": "#ffdad6",
+                    "surface": "#fef7ff",
+                    "on-tertiary-container": "#fffbff",
+                    "secondary-container": "#fc79bd",
+                    "on-surface-variant": "#494454"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "12px",
+                    "gutter": "20px",
+                    "md": "24px",
+                    "base": "8px",
+                    "xs": "4px",
+                    "margin": "24px",
+                    "xl": "64px",
+                    "lg": "40px"
+            },
+            "fontFamily": {
+                    "h3": ["Epilogue"],
+                    "label-caps": ["Lexend"],
+                    "h2": ["Epilogue"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "label-bold": ["Lexend"],
+                    "h1": ["Epilogue"]
+            },
+            "fontSize": {
+                    "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "1.0", "fontWeight": "700"}],
+                    "h2": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-bold": ["14px", {"lineHeight": "1.0", "fontWeight": "600"}],
+                    "h1": ["40px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: #FFFDF5; }
+        .polka-dot-strip {
+            background-image: radial-gradient(#1A1A1A 1.5px, transparent 1.5px);
+            background-size: 16px 16px;
+            height: 48px;
+            width: 100%;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neobrutal-shadow {
+            box-shadow: 4px 4px 0px 0px #1A1A1A;
+        }
+        .neobrutal-shadow-lg {
+            box-shadow: 8px 8px 0px 0px #1A1A1A;
+        }
+        .neobrutal-card {
+            border: 2.5px solid #1A1A1A;
+            background-color: white;
+        }
+        .sticker-circle {
+            border: 2.5px solid #1A1A1A;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-background selection:bg-primary-container selection:text-white">
+<!-- TopAppBar Shell -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#FDFBF7] dark:bg-zinc-950 border-b-[2.5px] border-zinc-900 shadow-[4px_4px_0px_0px_#1A1A1A]">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 font-['Epilogue']">MindMap</span>
+</div>
+<div class="hidden md:flex gap-8 items-center h-full">
+<a class="font-['Epilogue'] font-bold text-[#8B5CF6] border-b-4 border-[#8B5CF6] pb-1 h-full flex items-center mt-1" href="#">Home</a>
+<a class="font-['Epilogue'] font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 transition-all" href="#">Journal</a>
+<a class="font-['Epilogue'] font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 transition-all" href="#">Session</a>
+<a class="font-['Epilogue'] font-bold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 transition-all" href="#">Dashboard</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all active:translate-y-0.5">
+<span class="material-symbols-outlined text-zinc-900" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</nav>
+<main class="pt-24 pb-32 min-h-screen relative overflow-hidden">
+<!-- Polka Dot Decoration -->
+<div class="polka-dot-strip opacity-10 absolute top-16 left-0"></div>
+<div class="max-w-4xl mx-auto px-6 relative z-10">
+<!-- Welcome Header -->
+<header class="mb-12 text-center md:text-left">
+<h1 class="font-h1 text-h1 text-on-background mb-2">Hello, Sam.</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Ready for your daily mind-map?</p>
+</header>
+<!-- Main Interactive Section -->
+<div class="relative flex flex-col items-center">
+<!-- Large Decorative Background Circle (The Wild Decoration) -->
+<div class="absolute -top-12 -left-12 w-64 h-64 bg-primary-fixed-dim/40 rounded-full blur-3xl -z-10"></div>
+<div class="absolute -top-8 -z-10 sticker-circle w-72 h-72 rounded-full bg-secondary-fixed/50 animate-pulse transition-all" style="transform: rotate(-15deg);"></div>
+<!-- Prompt Question -->
+<div class="neobrutal-card neobrutal-shadow px-6 py-3 rounded-full mb-8 bg-tertiary-fixed inline-block">
+<span class="font-label-bold text-label-bold text-on-tertiary-fixed">DAILY CHECK-IN</span>
+</div>
+<h2 class="font-h2 text-h2 text-center text-on-background mb-10 max-w-lg">How are you feeling right now?</h2>
+<!-- Journal Entry Area -->
+<div class="w-full max-w-2xl neobrutal-card neobrutal-shadow-lg rounded-3xl p-6 mb-10 relative bg-white">
+<div class="absolute -top-3 -right-3 w-12 h-12 neobrutal-card bg-[#FFD8E7] flex items-center justify-center rotate-6 shadow-[2px_2px_0px_0px_#1A1A1A]">
+<span class="material-symbols-outlined text-zinc-900" data-icon="edit_note">edit_note</span>
+</div>
+<textarea class="w-full h-48 bg-transparent border-none focus:ring-0 font-body-lg text-body-lg text-on-background placeholder:text-outline/50 resize-none p-4" placeholder="Write down whatever's on your mind..."></textarea>
+<div class="flex justify-between items-center mt-4 pt-4 border-t-2 border-zinc-100">
+<span class="text-label-caps text-label-caps text-outline">LINE-RULED SPACE</span>
+<button class="bg-primary text-white font-label-bold px-8 py-3 rounded-xl neobrutal-shadow active:translate-y-0.5 active:shadow-none transition-all">
+                            Save Entry
+                        </button>
+</div>
+</div>
+<!-- Mood Confetti System -->
+<div class="w-full flex flex-wrap justify-center gap-4">
+<!-- Calm -->
+<button class="group flex flex-col items-center gap-3 active:scale-95 transition-all">
+<div class="w-20 h-20 rounded-full sticker-circle bg-[#E1F5FE] flex items-center justify-center neobrutal-shadow group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="nature_people">nature_people</span>
+</div>
+<span class="font-label-bold text-label-bold px-4 py-1.5 rounded-full bg-white border-2 border-zinc-900">Calm</span>
+</button>
+<!-- Focused -->
+<button class="group flex flex-col items-center gap-3 active:scale-95 transition-all">
+<div class="w-20 h-20 rounded-full sticker-circle bg-[#F3E5F5] flex items-center justify-center neobrutal-shadow group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="center_focus_strong">center_focus_strong</span>
+</div>
+<span class="font-label-bold text-label-bold px-4 py-1.5 rounded-full bg-white border-2 border-zinc-900">Focused</span>
+</button>
+<!-- Anxious -->
+<button class="group flex flex-col items-center gap-3 active:scale-95 transition-all">
+<div class="w-20 h-20 rounded-full sticker-circle bg-[#FFFDE7] flex items-center justify-center neobrutal-shadow group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="waves">waves</span>
+</div>
+<span class="font-label-bold text-label-bold px-4 py-1.5 rounded-full bg-white border-2 border-zinc-900">Anxious</span>
+</button>
+<!-- Energized -->
+<button class="group flex flex-col items-center gap-3 active:scale-95 transition-all">
+<div class="w-20 h-20 rounded-full sticker-circle bg-[#FFF3E0] flex items-center justify-center neobrutal-shadow group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="bolt">bolt</span>
+</div>
+<span class="font-label-bold text-label-bold px-4 py-1.5 rounded-full bg-white border-2 border-zinc-900">Energized</span>
+</button>
+<!-- Tired -->
+<button class="group flex flex-col items-center gap-3 active:scale-95 transition-all">
+<div class="w-20 h-20 rounded-full sticker-circle bg-[#F5F5F5] flex items-center justify-center neobrutal-shadow group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl" data-icon="bedtime">bedtime</span>
+</div>
+<span class="font-label-bold text-label-bold px-4 py-1.5 rounded-full bg-white border-2 border-zinc-900">Tired</span>
+</button>
+</div>
+</div>
+<!-- Dashboard Teaser (Bento Grid Style) -->
+<section class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="neobrutal-card neobrutal-shadow p-6 rounded-3xl bg-secondary-fixed col-span-1 md:col-span-2 flex justify-between items-center overflow-hidden relative">
+<div class="relative z-10">
+<h3 class="font-h3 text-h3 mb-2">Weekly Progress</h3>
+<p class="font-body-md text-on-secondary-fixed-variant max-w-xs">You've logged 4 entries this week. Keep up the momentum!</p>
+</div>
+<img alt="Progress Graph" class="w-32 h-32 object-cover rounded-2xl neobrutal-card rotate-3" data-alt="A stylized 3D rendered chart with vibrant neon violet and pink columns on a clean white background. The aesthetic is modern neobrutalist with thick black outlines and hard shadows, matching a playful mental wellness application. The lighting is bright and cheerful, evoking a sense of achievement and positive growth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFmJFcLOWLJJRWMXe1ANtX_avv2Q02HpyKHTzoYnz6wPfMOTjfRKkMWTeI2bU02szViZLiiX08wcBdmzpwO10hLI8jkQVLkd7IKgFfT0t4fnQTVt_xX2GB1E5bKTM7MyIy7XQirRwmAB1rHnitY7EmXzx-NHooQir3ageceARlYAchdtBzGObVlyXjpg8ccG-cVrwdXBDoQIRTf2D_ox9iAUGsfx0FfvtF3PMmWn2LplfE-G3Es4mm6W4zXmSCdUrMBstEdfx6Zk8"/>
+</div>
+<div class="neobrutal-card neobrutal-shadow p-6 rounded-3xl bg-tertiary-fixed flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-5xl mb-3 text-tertiary" data-icon="emoji_events" data-weight="fill" style="font-variation-settings: 'FILL' 1;">emoji_events</span>
+<h3 class="font-h3 text-h3">3 Day Streak!</h3>
+<p class="font-label-bold text-label-bold mt-2">Personal Best</p>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 pb-safe px-4 bg-white dark:bg-zinc-900 border-t-[2.5px] border-zinc-900 shadow-[0_-4px_0px_0px_#1A1A1A]">
+<div class="flex flex-col items-center justify-center bg-[#8B5CF6] text-white rounded-xl px-6 py-2 shadow-[2px_2px_0px_0px_#1A1A1A] active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+<span class="font-['Epilogue'] text-[10px] font-bold uppercase tracking-wider mt-0.5">Check-in</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-[#8B5CF6] transition-colors">
+<span class="material-symbols-outlined" data-icon="timer">timer</span>
+<span class="font-['Epilogue'] text-[10px] font-bold uppercase tracking-wider mt-0.5">Focus</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-[#8B5CF6] transition-colors">
+<span class="material-symbols-outlined" data-icon="equalizer">equalizer</span>
+<span class="font-['Epilogue'] text-[10px] font-bold uppercase tracking-wider mt-0.5">Stats</span>
+</div>
+<div class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-[#8B5CF6] transition-colors">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Epilogue'] text-[10px] font-bold uppercase tracking-wider mt-0.5">Profile</span>
+</div>
+</nav>
+<!-- Floating Action Button (Optional Contextual FAB) -->
+<button class="fixed bottom-24 right-6 w-14 h-14 bg-primary rounded-full neobrutal-shadow flex items-center justify-center text-white active:translate-y-0.5 transition-all z-40 md:hidden">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+</body></html>

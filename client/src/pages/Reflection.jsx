@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { motion } from 'framer-motion';
-import { Heart, Send, CheckCircle } from 'lucide-react';
 
 function Reflection() {
   const [reflectionData, setReflectionData] = useState(null);
@@ -20,7 +19,7 @@ function Reflection() {
         const response = await api.post('/getReflection', {
           mood: sessionData.mood,
           plannedMinutes: sessionData.sessionPlan.totalStudyMinutes,
-          actualMinutes: sessionData.sessionPlan.totalStudyMinutes // Simplified
+          actualMinutes: sessionData.sessionPlan.totalStudyMinutes
         });
         setReflectionData(response.data);
       } catch (err) {
@@ -40,82 +39,118 @@ function Reflection() {
       await api.post('/saveSession', {
         ...sessionData,
         reflectionAnswers: answers,
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        partial: false // Mark as full completion
       });
       setSubmitted(true);
-      setTimeout(() => navigate('/dashboard'), 2000);
+      sessionStorage.removeItem('currentSession'); // Clear session
+      setTimeout(() => navigate('/dashboard'), 1500);
     } catch (err) {
-      console.error(err);
+      console.error('Failed to save session:', err);
+      // Fallback: Still navigate if save fails but show a warning?
+      setSubmitted(true);
+      setTimeout(() => navigate('/dashboard'), 2000);
     } finally {
       setLoading(false);
     }
   };
 
   if (!reflectionData) return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-500"></div>
-      <p className="text-slate-400">Preparing your reflection prompts...</p>
+    <div className="flex flex-col items-center justify-center py-32 gap-6">
+      <div className="w-16 h-16 border-4 border-zinc-900 border-t-primary rounded-full animate-spin"></div>
+      <p className="font-h3 text-xl text-zinc-900">Preparing your reflection prompts...</p>
     </div>
   );
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }}
-      className="max-w-2xl mx-auto"
+      initial={{ opacity: 0, y: 20 }} 
+      animate={{ opacity: 1, y: 0 }}
+      className="max-w-3xl mx-auto pb-24"
     >
-      <header className="text-center mb-12">
-        <div className="inline-block p-3 bg-red-500/10 rounded-full text-red-400 mb-4">
-          <Heart className="w-8 h-8 fill-current" />
+      <header className="text-center mb-16">
+        <div className="inline-block p-4 bg-secondary-fixed-dim border-2 border-zinc-900 rounded-2xl shadow-[4px_4px_0px_0px_#1A1A1A] text-secondary mb-6 rotate-3">
+          <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
         </div>
-        <h1 className="text-4xl font-bold mb-2">Well done.</h1>
-        <p className="text-slate-400">Take a moment to process your session before you head out.</p>
+        <h1 className="font-h1 text-4xl mb-4">Well done.</h1>
+        <p className="font-body-lg text-on-surface-variant max-w-md mx-auto">Take a moment to process your session before you head out.</p>
       </header>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="glass-card">
-          <label className="block text-sm font-medium text-indigo-300 mb-3 italic">
+      <form onSubmit={handleSubmit} className="space-y-12">
+        <div className="neobrutal-card neobrutal-shadow p-8 bg-white rounded-3xl relative">
+          <div className="absolute -top-4 -left-4 bg-tertiary-fixed border-2 border-zinc-900 px-4 py-1 rounded-lg -rotate-3 shadow-[2px_2px_0px_0px_#1A1A1A] font-label-bold text-xs">
+            PROMPT 01
+          </div>
+          <label className="block font-h3 text-xl text-zinc-900 mb-6 italic leading-relaxed">
             "{reflectionData.prompt1}"
           </label>
           <textarea
-            className="w-full h-32 input-field resize-none"
+            className="w-full h-32 bg-zinc-50 border-2 border-zinc-900 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-primary/20 font-body-md text-lg"
+            placeholder="Write your thoughts..."
             value={answers.q1}
             onChange={(e) => setAnswers({ ...answers, q1: e.target.value })}
             required
           />
         </div>
 
-        <div className="glass-card">
-          <label className="block text-sm font-medium text-indigo-300 mb-3 italic">
+        <div className="neobrutal-card neobrutal-shadow p-8 bg-white rounded-3xl relative">
+          <div className="absolute -top-4 -left-4 bg-primary-fixed border-2 border-zinc-900 px-4 py-1 rounded-lg -rotate-3 shadow-[2px_2px_0px_0px_#1A1A1A] font-label-bold text-xs">
+            PROMPT 02
+          </div>
+          <label className="block font-h3 text-xl text-zinc-900 mb-6 italic leading-relaxed">
             "{reflectionData.prompt2}"
           </label>
           <textarea
-            className="w-full h-32 input-field resize-none"
+            className="w-full h-32 bg-zinc-50 border-2 border-zinc-900 rounded-2xl p-4 focus:outline-none focus:ring-2 focus:ring-primary/20 font-body-md text-lg"
+            placeholder="Write your thoughts..."
             value={answers.q2}
             onChange={(e) => setAnswers({ ...answers, q2: e.target.value })}
             required
           />
         </div>
 
-        <p className="text-center text-slate-400 italic text-sm">
-          {reflectionData.closingNote}
-        </p>
+        <div className="bg-primary-fixed/30 border-2 border-dashed border-primary rounded-3xl p-6 text-center">
+          <p className="font-body-md text-primary font-bold italic leading-relaxed">
+            {reflectionData.closingNote}
+          </p>
+        </div>
 
         <div className="flex justify-center">
           <button 
             type="submit" 
             disabled={loading || submitted}
-            className={`btn-primary w-full max-w-sm flex items-center justify-center gap-3 py-4 ${submitted ? 'bg-green-500 hover:from-green-500 hover:to-green-500' : ''}`}
+            className={`neobrutal-card neobrutal-shadow px-12 py-5 rounded-2xl font-label-bold text-xl flex items-center gap-3 transition-all ${
+              submitted 
+                ? 'bg-green-500 text-white' 
+                : 'bg-primary text-white hover:translate-y-[-2px]'
+            }`}
           >
             {loading ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
             ) : submitted ? (
-              <>
-                <CheckCircle className="w-5 h-5" /> Saved to History
-              </>
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex items-center gap-3 bg-green-500 text-white px-8 py-4 rounded-2xl neobrutal-shadow">
+                  <span className="material-symbols-outlined">check_circle</span> 
+                  <span className="font-label-bold">Session Saved Successfully!</span>
+                </div>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => navigate('/')}
+                    className="neobrutal-card neobrutal-shadow px-6 py-3 bg-white rounded-xl font-label-bold text-sm"
+                  >
+                    Back to Check-in
+                  </button>
+                  <button 
+                    onClick={() => navigate('/dashboard')}
+                    className="neobrutal-card neobrutal-shadow px-6 py-3 bg-primary text-white rounded-xl font-label-bold text-sm"
+                  >
+                    View Stats
+                  </button>
+                </div>
+              </div>
             ) : (
               <>
-                <Send className="w-5 h-5" /> Complete Session
+                <span className="material-symbols-outlined">send</span> Complete Session
               </>
             )}
           </button>

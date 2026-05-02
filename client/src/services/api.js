@@ -11,8 +11,21 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
+  let token = accessToken;
+  if (!token) {
+    const tokensStr = sessionStorage.getItem('appid_tokens');
+    if (tokensStr) {
+      try {
+        const tokens = JSON.parse(tokensStr);
+        token = tokens.accessToken;
+      } catch (e) {
+        console.error('Failed to parse tokens from sessionStorage', e);
+      }
+    }
+  }
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
