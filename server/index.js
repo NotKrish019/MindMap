@@ -17,17 +17,27 @@ app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
 // Initialize Watson NLU
-const nlu = new NaturalLanguageUnderstandingV1({
-  version: '2022-04-07',
-  authenticator: new IamAuthenticator({ apikey: process.env.WATSON_NLU_API_KEY }),
-  serviceUrl: process.env.WATSON_NLU_URL,
-});
+let nlu;
+try {
+  nlu = new NaturalLanguageUnderstandingV1({
+    version: '2022-04-07',
+    authenticator: new IamAuthenticator({ apikey: process.env.WATSON_NLU_API_KEY || 'dummy' }),
+    serviceUrl: process.env.WATSON_NLU_URL || 'dummy',
+  });
+} catch (e) {
+  console.error("Failed to initialize Watson NLU:", e.message);
+}
 
 // Initialize Cloudant
-const cloudant = CloudantV1.newInstance({
-  authenticator: new IamAuthenticator({ apikey: process.env.CLOUDANT_API_KEY }),
-  serviceUrl: process.env.CLOUDANT_URL,
-});
+let cloudant;
+try {
+  cloudant = CloudantV1.newInstance({
+    authenticator: new IamAuthenticator({ apikey: process.env.CLOUDANT_API_KEY || 'dummy' }),
+    serviceUrl: process.env.CLOUDANT_URL || 'dummy',
+  });
+} catch (e) {
+  console.error("Failed to initialize Cloudant:", e.message);
+}
 const DB_NAME = 'mindmap-moodlogs';
 
 // Ensure database exists
@@ -49,13 +59,24 @@ async function ensureDbExists() {
 ensureDbExists();
 
 // Initialize Gemini (Using the requested Flash model)
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+let genAI;
+let model;
+try {
+  genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy');
+  model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+} catch (e) {
+  console.error("Failed to initialize Gemini:", e.message);
+}
 
 // Auth Middleware (Manual JWT Verification for IBM App ID)
-const client = jwksClient({
-  jwksUri: `${process.env.APPID_OAUTH_SERVER_URL}/publickeys`
-});
+let client;
+try {
+  client = jwksClient({
+    jwksUri: `${process.env.APPID_OAUTH_SERVER_URL || 'dummy'}/publickeys`
+  });
+} catch (e) {
+  console.error("Failed to initialize JWKS Client:", e.message);
+}
 
 function getKey(header, callback) {
   client.getSigningKey(header.kid, (err, key) => {
@@ -114,6 +135,10 @@ function mapNluToMood(emotions, sentiment) {
 }
 
 // Routes
+app.get('/', (req, res) => {
+  res.status(200).json({ message: "MindMap API is running successfully!" });
+});
+
 app.post('/api/analyseAndPlan', authMiddleware, async (req, res) => {
   const { journalText, subjects, availableHours } = req.body;
   console.log(`Processing plan for user: ${req.userId}`);
