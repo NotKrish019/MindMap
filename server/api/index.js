@@ -63,7 +63,7 @@ let genAI;
 let model;
 try {
   genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy');
-  model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 } catch (e) {
   console.error("Failed to initialize Gemini:", e.message);
 }
