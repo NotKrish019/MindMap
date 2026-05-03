@@ -184,7 +184,7 @@ function Dashboard() {
              <span className="text-xs font-label-bold uppercase tracking-widest text-outline">{history.length} Entries</span>
           </div>
           <div className="grid grid-cols-1 gap-6">
-            {history.map((doc, i) => (
+            {[...history].sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date)).map((doc, i) => (
               <div key={i} className="neobrutal-card p-6 rounded-2xl border-2 border-zinc-900 bg-zinc-50 flex flex-col md:flex-row items-center justify-between hover:translate-x-1 transition-all cursor-default group">
                 <div className="flex items-center gap-6 w-full md:w-auto">
                   <div className="p-4 bg-white border-2 border-zinc-900 rounded-xl text-zinc-900 group-hover:bg-primary group-hover:text-white transition-colors rotate-3">
